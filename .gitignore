@@ -1,0 +1,10 @@
+dist/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Temporary conversation-agent handoff helpers / archives.
+delete_files.bat
+get_paths.bat
+delta_changes.zip

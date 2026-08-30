@@ -1,0 +1,6 @@
+* text=auto
+*.lua text
+*.toc text
+*.md text
+*.py text
+*.bat text eol=crlf
