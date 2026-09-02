@@ -17,9 +17,10 @@ Use this file as a router. Read only what is relevant to the current task.
 - `architecture/documentation-policy.md` — how agents maintain project knowledge.
 - `architecture/delta-delivery-policy.md` — how conversation agents hand changes to the user's evolving local repository.
 
-## Target addons
+## Target addons / systems
 
 - `modules/pfui.md` — pfUI integration knowledge and module catalog.
+- `modules/wow.md` — WoW/OctoWoW client-level features, including virtual extra action bars.
 
 Add a target document when the first module for a new addon/system is introduced.
 
@@ -32,4 +33,5 @@ Add a target document when the first module for a new addon/system is introduced
 ## Work handoff
 
 - `work/active/` — significant unfinished tasks only.
+- `work/active/extra-action-bars.md` — first runtime-validation handoff for `wow.extra_action_bars`.
 - `work/completed/` — finalized handoff notes worth retaining.

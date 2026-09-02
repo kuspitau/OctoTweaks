@@ -26,7 +26,9 @@ OctoTweaks is one installed addon containing many independent tweaks. It should 
 
 `core/Diagnostics.lua` exposes `/ot` diagnostics.
 
-`modules/<target>/` contains target-specific modules.
+`modules/<target>/` contains target-specific modules. The `wow` target is reserved for client-level features that do not depend on a third-party addon.
+
+`Bindings.xml`, when present, contains static native key-binding declarations required by addon features. It is not a Lua TOC source and should remain thin; behavior belongs in the owning module.
 
 ## Module lifecycle
 
@@ -54,10 +56,13 @@ These runtime states are separate from documentation/work states such as planned
 
 `OctoTweaksDB` currently stores:
 
-- `debug`
-- per-module enable overrides under `modules`
+- `debug`;
+- per-module enable overrides under `modules`;
+- feature-owned persistent state under namespaced subtrees when a concrete module requires it. `wow.extra_action_bars` owns `extraActionBars` (schema version, slot assignments, bar settings, and launcher position).
 
-No migration framework exists yet. Introduce one only when a real schema change requires it, and record the decision.
+New feature namespaces should remain owned by their module rather than growing generic core configuration. No repository-wide migration framework exists yet; introduce one only when a real cross-version migration requirement appears and record the decision.
+
+Native WoW key assignments are saved through the client's binding system rather than duplicated into `OctoTweaksDB` when the client already provides the appropriate persistence semantics.
 
 ## Local delta workflow
 

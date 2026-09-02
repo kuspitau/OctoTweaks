@@ -3,7 +3,7 @@
 ## Notes: Modular compatibility fixes and custom extensions for OctoWoW addons.
 ## Author: OctoTweaks contributors
 ## Version: 0.1.0-dev
-## OptionalDeps: pfUI
+## OptionalDeps: pfUI, SuperMacro
 ## SavedVariables: OctoTweaksDB
 
 Core.lua
@@ -11,3 +11,4 @@ core\Compatibility.lua
 core\Modules.lua
 core\Diagnostics.lua
 modules\pfui\LibPredictFix.lua
+modules\wow\ExtraActionBars.lua

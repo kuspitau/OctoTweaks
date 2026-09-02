@@ -2,13 +2,12 @@
 
 OctoTweaks is a modular compatibility/fix/feature addon for WoW 1.12 on OctoWoW. It extends or patches other addons externally while keeping their installed source untouched.
 
-## Initial scope
-
-The bootstrap currently contains one real module:
+## Current modules
 
 - `pfui.libpredict_fix` — guards pfUI's prediction handler against incomplete `UnitCastingInfo("player")` timestamps observed on OctoWoW/SuperWoW-style spellcast events.
+- `wow.extra_action_bars` — adds 96 persistent virtual action slots with configurable bars, tooltips/cooldowns, native key bindings, quick-bind mode, and always/hover/toggle/hold visibility.
 
-Future modules can target pfUI, pfQuest, Aegis Exchange, or other addons without turning OctoTweaks into a monolithic patch file.
+Future modules can target pfUI, pfQuest, Aegis Exchange, the WoW/OctoWoW client itself, or other addons without turning OctoTweaks into a monolithic patch file.
 
 ## Local repository workflow
 
@@ -61,6 +60,8 @@ The package is written under `dist/`.
 - `/ot modules`
 - `/ot debug on`
 - `/ot debug off`
+- `/otbar config` — open the Extra Action Bars settings panel
+- `/otbar` / `/octobars` — extra action bars help and advanced commands
 
 ## Developer validation
 

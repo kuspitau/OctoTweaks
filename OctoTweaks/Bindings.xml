@@ -1,0 +1,300 @@
+<Bindings>
+  <Binding name="OCTOTWEAKS_EXTRABARS_TOGGLE" header="OCTOTWEAKS_EXTRABARS">
+    OctoTweaks_ExtraBars_Toggle();
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABARS_HOLD" runOnUp="true">
+    if keystate == "down" then
+      OctoTweaks_ExtraBars_SetHold(true);
+    else
+      OctoTweaks_ExtraBars_SetHold(false);
+    end
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT1">
+    OctoTweaks_ExtraBars_UseSlot(1);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT2">
+    OctoTweaks_ExtraBars_UseSlot(2);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT3">
+    OctoTweaks_ExtraBars_UseSlot(3);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT4">
+    OctoTweaks_ExtraBars_UseSlot(4);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT5">
+    OctoTweaks_ExtraBars_UseSlot(5);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT6">
+    OctoTweaks_ExtraBars_UseSlot(6);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT7">
+    OctoTweaks_ExtraBars_UseSlot(7);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT8">
+    OctoTweaks_ExtraBars_UseSlot(8);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT9">
+    OctoTweaks_ExtraBars_UseSlot(9);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT10">
+    OctoTweaks_ExtraBars_UseSlot(10);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT11">
+    OctoTweaks_ExtraBars_UseSlot(11);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT12">
+    OctoTweaks_ExtraBars_UseSlot(12);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT13">
+    OctoTweaks_ExtraBars_UseSlot(13);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT14">
+    OctoTweaks_ExtraBars_UseSlot(14);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT15">
+    OctoTweaks_ExtraBars_UseSlot(15);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT16">
+    OctoTweaks_ExtraBars_UseSlot(16);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT17">
+    OctoTweaks_ExtraBars_UseSlot(17);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT18">
+    OctoTweaks_ExtraBars_UseSlot(18);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT19">
+    OctoTweaks_ExtraBars_UseSlot(19);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT20">
+    OctoTweaks_ExtraBars_UseSlot(20);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT21">
+    OctoTweaks_ExtraBars_UseSlot(21);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT22">
+    OctoTweaks_ExtraBars_UseSlot(22);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT23">
+    OctoTweaks_ExtraBars_UseSlot(23);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT24">
+    OctoTweaks_ExtraBars_UseSlot(24);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT25">
+    OctoTweaks_ExtraBars_UseSlot(25);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT26">
+    OctoTweaks_ExtraBars_UseSlot(26);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT27">
+    OctoTweaks_ExtraBars_UseSlot(27);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT28">
+    OctoTweaks_ExtraBars_UseSlot(28);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT29">
+    OctoTweaks_ExtraBars_UseSlot(29);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT30">
+    OctoTweaks_ExtraBars_UseSlot(30);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT31">
+    OctoTweaks_ExtraBars_UseSlot(31);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT32">
+    OctoTweaks_ExtraBars_UseSlot(32);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT33">
+    OctoTweaks_ExtraBars_UseSlot(33);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT34">
+    OctoTweaks_ExtraBars_UseSlot(34);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT35">
+    OctoTweaks_ExtraBars_UseSlot(35);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT36">
+    OctoTweaks_ExtraBars_UseSlot(36);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT37">
+    OctoTweaks_ExtraBars_UseSlot(37);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT38">
+    OctoTweaks_ExtraBars_UseSlot(38);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT39">
+    OctoTweaks_ExtraBars_UseSlot(39);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT40">
+    OctoTweaks_ExtraBars_UseSlot(40);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT41">
+    OctoTweaks_ExtraBars_UseSlot(41);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT42">
+    OctoTweaks_ExtraBars_UseSlot(42);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT43">
+    OctoTweaks_ExtraBars_UseSlot(43);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT44">
+    OctoTweaks_ExtraBars_UseSlot(44);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT45">
+    OctoTweaks_ExtraBars_UseSlot(45);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT46">
+    OctoTweaks_ExtraBars_UseSlot(46);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT47">
+    OctoTweaks_ExtraBars_UseSlot(47);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT48">
+    OctoTweaks_ExtraBars_UseSlot(48);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT49">
+    OctoTweaks_ExtraBars_UseSlot(49);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT50">
+    OctoTweaks_ExtraBars_UseSlot(50);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT51">
+    OctoTweaks_ExtraBars_UseSlot(51);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT52">
+    OctoTweaks_ExtraBars_UseSlot(52);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT53">
+    OctoTweaks_ExtraBars_UseSlot(53);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT54">
+    OctoTweaks_ExtraBars_UseSlot(54);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT55">
+    OctoTweaks_ExtraBars_UseSlot(55);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT56">
+    OctoTweaks_ExtraBars_UseSlot(56);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT57">
+    OctoTweaks_ExtraBars_UseSlot(57);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT58">
+    OctoTweaks_ExtraBars_UseSlot(58);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT59">
+    OctoTweaks_ExtraBars_UseSlot(59);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT60">
+    OctoTweaks_ExtraBars_UseSlot(60);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT61">
+    OctoTweaks_ExtraBars_UseSlot(61);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT62">
+    OctoTweaks_ExtraBars_UseSlot(62);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT63">
+    OctoTweaks_ExtraBars_UseSlot(63);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT64">
+    OctoTweaks_ExtraBars_UseSlot(64);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT65">
+    OctoTweaks_ExtraBars_UseSlot(65);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT66">
+    OctoTweaks_ExtraBars_UseSlot(66);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT67">
+    OctoTweaks_ExtraBars_UseSlot(67);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT68">
+    OctoTweaks_ExtraBars_UseSlot(68);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT69">
+    OctoTweaks_ExtraBars_UseSlot(69);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT70">
+    OctoTweaks_ExtraBars_UseSlot(70);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT71">
+    OctoTweaks_ExtraBars_UseSlot(71);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT72">
+    OctoTweaks_ExtraBars_UseSlot(72);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT73">
+    OctoTweaks_ExtraBars_UseSlot(73);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT74">
+    OctoTweaks_ExtraBars_UseSlot(74);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT75">
+    OctoTweaks_ExtraBars_UseSlot(75);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT76">
+    OctoTweaks_ExtraBars_UseSlot(76);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT77">
+    OctoTweaks_ExtraBars_UseSlot(77);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT78">
+    OctoTweaks_ExtraBars_UseSlot(78);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT79">
+    OctoTweaks_ExtraBars_UseSlot(79);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT80">
+    OctoTweaks_ExtraBars_UseSlot(80);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT81">
+    OctoTweaks_ExtraBars_UseSlot(81);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT82">
+    OctoTweaks_ExtraBars_UseSlot(82);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT83">
+    OctoTweaks_ExtraBars_UseSlot(83);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT84">
+    OctoTweaks_ExtraBars_UseSlot(84);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT85">
+    OctoTweaks_ExtraBars_UseSlot(85);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT86">
+    OctoTweaks_ExtraBars_UseSlot(86);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT87">
+    OctoTweaks_ExtraBars_UseSlot(87);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT88">
+    OctoTweaks_ExtraBars_UseSlot(88);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT89">
+    OctoTweaks_ExtraBars_UseSlot(89);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT90">
+    OctoTweaks_ExtraBars_UseSlot(90);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT91">
+    OctoTweaks_ExtraBars_UseSlot(91);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT92">
+    OctoTweaks_ExtraBars_UseSlot(92);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT93">
+    OctoTweaks_ExtraBars_UseSlot(93);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT94">
+    OctoTweaks_ExtraBars_UseSlot(94);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT95">
+    OctoTweaks_ExtraBars_UseSlot(95);
+  </Binding>
+  <Binding name="OCTOTWEAKS_EXTRABAR_SLOT96">
+    OctoTweaks_ExtraBars_UseSlot(96);
+  </Binding>
+</Bindings>
