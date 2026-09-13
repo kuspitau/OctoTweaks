@@ -21,6 +21,7 @@ Use this file as a router. Read only what is relevant to the current task.
 
 - `modules/pfui.md` — pfUI integration knowledge and module catalog.
 - `modules/wow.md` — WoW/OctoWoW client-level features, including virtual extra action bars.
+- `modules/aegis.md` — Aegis Exchange 1.53.16 audit, adapter contract, Market Workbench prototype, and runtime test procedure.
 
 Add a target document when the first module for a new addon/system is introduced.
 
@@ -34,4 +35,5 @@ Add a target document when the first module for a new addon/system is introduced
 
 - `work/active/` — significant unfinished tasks only.
 - `work/active/extra-action-bars.md` — first runtime-validation handoff for `wow.extra_action_bars`.
+- `work/active/market-workbench.md` — Aegis adapter/Market Workbench prototype runtime-validation handoff.
 - `work/completed/` — finalized handoff notes worth retaining.
