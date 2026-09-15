@@ -13,4 +13,6 @@ core\Diagnostics.lua
 modules\pfui\LibPredictFix.lua
 modules\wow\ExtraActionBars.lua
 modules\aegis\Adapter.lua
+modules\aegis\UIAdapter.lua
 modules\aegis\MarketWorkbench.lua
+modules\aegis\MarketWorkbenchAegisUI.lua

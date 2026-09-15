@@ -2,86 +2,83 @@
 
 ## Goal
 
-Build an OctoTweaks orchestration layer over Aegis: Exchange that keeps **Target Item** separate from **Reference Listing**, automatically searches comparable items, and eventually supports very short selling workflows without replacing Aegis' mature AH backend.
+Build an OctoTweaks orchestration layer over Aegis: Exchange that keeps **Target Item** separate from **Reference Listing**, automatically searches comparable items, and supports very short selling workflows without replacing Aegis' mature AH backend.
 
-## Current implemented slice
+## Stable baseline — phase 1
+
+The following workflow is runtime-confirmed on the user's Aegis Exchange **1.20.2** setup:
+
+- Target Item capture and retention;
+- corrected OctoWoW item metadata;
+- Similar Search from the custom Aegis AH UI;
+- page polling/result collection;
+- grouped parent rows plus individual listings;
+- hover/tooltips after the vanilla full-link fix;
+- independent Reference Listing selection through `SET`;
+- Match / Flat / Percent Suggested Price;
+- direct multi-stack `POST` through Aegis `sell.StartPosting`.
+
+This is the regression baseline. Do not rewrite the scanner, grouped-result semantics, tooltip path, or posting backend merely to integrate the UI.
+
+## Current implemented slice — Aegis-hosted Workbench
 
 This delta adds:
 
-- `aegis.integration`: one version-aware/probed boundary around Aegis internals;
-- `/otaegis` capability diagnostics;
-- `aegis.market_workbench`: first UI prototype;
-- Target Item selection from bags;
-- automatic Similar Search by class/subclass/equipment slot and required-level range;
-- optional buyout-only and exact-quality filtering;
-- all-page result collection through Aegis scanning;
-- grouped parent rows plus individual auction children;
-- normal/Aegis-enhanced tooltips;
-- independent Reference Listing selection;
-- Match / Flat / Percent suggested pricing;
-- safe tooltip opening for collected AH links;
-- direct multi-stack posting through Aegis `sell.StartPosting`, with stack size, auction count, duration, progress and cancellation.
+- `modules/aegis/UIAdapter.lua`, a dedicated private-presentation boundary inside `aegis.integration`;
+- exact UI source pinning to Aegis 1.20.2 upstream commit `70f648492607ca1aec6c3df2da42deed21d09c9d`;
+- structural probes for `ui.BuildWindow`, `ui.OpenWindow`, `ui.SelectSubTab`, and the post-build `ui.subtabs` / `ui.panels` / `ui.content` host;
+- `aegis.market_workbench_ui`, isolated from the already validated backend Workbench module;
+- a seventh `Workbench` Aegis sub-tab and dedicated Aegis panel, added externally without modifying Aegis files;
+- reuse/reparenting of the existing Workbench presentation rather than a second Buy/Sell implementation;
+- temporary Aegis host-height acquisition while the 870x500 Workbench is selected, with restoration before normal Aegis tabs repaint and protection against undoing a user resize;
+- `/otmarket` routing into the integrated tab while Aegis is open, with standalone fallback outside Aegis;
+- integrated close/toggle behavior that returns to Aegis Buy instead of leaving an empty panel;
+- UI diagnostics appended to `/otmarket status`.
 
-Deep embedding inside the Aegis window is deliberately still deferred.
+The Market Workbench v1 pricing milestone is now a runtime-confirmed baseline: plain-right-click Target → automatic Similar Search → automatic first-priced Reference → persisted undercut preset → Suggested Price, with SellValue-backed vendor comparison when available. The iteration-5 vendor/gain correction is confirmed working in game. `POST + NEXT` is **not** included in v1; safer auto-pricing safeguards are the preferred next milestone before accelerating posting.
 
 ## Important audit discoveries
 
-Authoritative reusable detail is in `docs/modules/aegis.md`. The key architectural conclusions are:
+Authoritative reusable detail is in `docs/modules/aegis.md`. The key conclusions are:
 
-- Aegis 1.53.16 and the user's installed 1.20.2 build have now both been source-audited for the internals used here. 1.20.2 exposes the expected scanner/category/database/sell helpers and explicitly documents cold `GetItemInfo` cache misses on 1.12. Runtime additionally showed that its last-number `util.ItemInfo` anchor shifts fields on this Octo client, so the adapter now validates that output and has a texture/equipLoc-anchored raw fallback.
-- The Aegis source only labels its Courier integration block as a public contract. Other useful tables are internals and must remain behind `modules/aegis/Adapter.lua` capability probes.
-- OctoTweaks does not bind to Aegis result-row/rendering internals, but AH-session detection must recognize Aegis' top-level frame because Aegis intentionally hides Blizzard `AuctionFrame` while preserving the server session.
-- Aegis' scanner can pause/resume and its Buy engine understands active scanning, but the requested future idle-background priority scheduler does not yet exist as a reusable Aegis contract.
+- The exact Aegis 1.20.2 source is identifiable upstream at commit `70f64849...`; its `.toc` reports version 1.20.2.
+- `BuildWindow()` creates static initial tabs, but after construction the runtime dispatcher uses mutable `ui.subtabs` and `ui.panels` tables.
+- `ui.SelectSubTab(name)` iterates those tables dynamically, so an externally appended key is shown/hidden/tinted by Aegis' own dispatcher.
+- `ui.RefreshCurrentTab()` has no fallback error for unknown keys; it simply skips Aegis-specific refresh work. This makes an extension panel substantially less fragile than replacing Aegis Buy/Sell.
+- The Workbench itself does not need direct Aegis UI access. Every new private reference lives in `UIAdapter.lua`.
+- Presentation internals remain low-stability/private despite this useful seam. The new integration is therefore exact-version-gated to 1.20.2. Backend Workbench support remains separate and can continue on structurally compatible versions.
+- Aegis 1.20.2 already contains a Post/Skip bag queue, but this slice does not bind to that private workflow. It is design evidence for later `POST + NEXT`, not a dependency added prematurely.
 
 ## Files that matter next
 
 - `OctoTweaks/modules/aegis/Adapter.lua`
+- `OctoTweaks/modules/aegis/UIAdapter.lua`
 - `OctoTweaks/modules/aegis/MarketWorkbench.lua`
+- `OctoTweaks/modules/aegis/MarketWorkbenchAegisUI.lua`
 - `docs/modules/aegis.md`
 - `docs/CURRENT_STATE.md`
 - this work note
 
-Aegis source audited upstream:
-
-- `core/init.lua`
-- `core/scan.lua`
-- `core/buy.lua`
-- `core/db.lua`
-- `core/sell.lua`
-- `ui/tooltip.lua`
-- `README.md`
-
 ## Validation state
 
-- source audit against Aegis 1.53.16: **DONE**;
-- source audit against the user's installed Aegis 1.20.2 ZIP: **DONE**;
-- Lua parse/static mocked validation for the phase-1 implementation: **PASS** when the implementation handoff was prepared;
-- OctoWoW runtime validation on the user's Aegis 1.20.2 setup: **PASS for phase 1**.
+- backend source audit against Aegis 1.53.16: **DONE**;
+- backend/source audit against Aegis 1.20.2: **DONE**;
+- exact Aegis 1.20.2 private UI audit at commit `70f64849...`: **DONE**;
+- phase-1 OctoWoW runtime validation: **PASS**;
+- new Lua parse validation (`texluac -p`): **PASS**;
+- focused mocked Aegis 1.20.2 UI integration smoke test: **PASS**;
+- full repository `python tools/check.py` on the reconstructed push candidate: **PASS** (2026-09-15);
+- parse validation of all addon Lua sources with `texluac -p`: **PASS** (2026-09-15);
+- integrated Aegis sub-tab / Market Workbench v1 pricing workflow in OctoWoW: **PASS** — enablement, single-tab attachment, embedded layout/controls, plain-right-click Target selection, auto-search, auto-reference, persisted pricing, Suggested Price, and SellValue-backed vendor/gain display are confirmed.
 
-Confirmed in game:
+## Next active milestone — safer automatic pricing
 
-- Target Item capture and corrected item metadata;
-- Similar Search from the custom Aegis AH UI;
-- page polling/result collection;
-- grouped result interaction;
-- hover/tooltips after the vanilla full-link fix;
-- independent Reference Listing selection through `SET`;
-- Suggested Price calculation/display;
-- direct Aegis-backed `POST`.
+The v1 pricing path is stable enough for the push. The next implementation slice should improve automatic pricing safety before increasing posting speed:
 
-The phase-1 workflow can therefore be treated as the stable baseline for the next conversation.
+1. add explicit `Manual`, `Exact-first`, and `Auto floor` reference policies;
+2. add safeguards against isolated/absurdly low listings and a minimum acceptable relationship to vendor value;
+3. keep the chosen reference explainable and manually overridable with `SET`;
+4. preserve the current Aegis backend ownership and user-priority scan rules;
+5. only after those safeguards are runtime-stable, implement **POST + NEXT**.
 
-## Next active milestone — integrate the Workbench into Aegis UI
-
-The next conversation should move the validated Workbench presentation into the Aegis interface **without modifying Aegis files**. Prefer an additional Aegis sub-tab/panel or another minimally coupled UI extension over replacing Aegis' existing Buy/Sell views.
-
-Constraints for that work:
-
-- preserve the validated `Target → Similar Search → SET → POST` behavior;
-- keep `modules/aegis/Adapter.lua` as the only boundary for version-sensitive Aegis internals;
-- add capability/structure probes for every new Aegis UI internal used;
-- reuse Aegis scanner, market DB, grouped Buy concepts, and Sell backend rather than duplicating them;
-- keep a failure in the UI integration isolated so it cannot break other OctoTweaks modules or Aegis itself;
-- do not expand into background scanning, inventory analytics, or deep statistics in the same slice unless required by the UI integration.
-
-After the integrated UI is stable, the preferred next workflow enhancement is `POST + NEXT`, followed by automatic reference modes and the economic/inventory views described in the roadmap.
+Background scanning, inventory analytics, and deeper market analytics remain explicitly out of scope for the immediate next slice.

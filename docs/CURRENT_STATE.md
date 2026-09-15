@@ -1,6 +1,6 @@
 # Current State
 
-Last reviewed: 2026-09-13
+Last reviewed: 2026-09-15
 
 This document describes what is true in the repository now. Do not put speculative future work here.
 
@@ -119,35 +119,37 @@ The visual-state fixes, settings UI, Shift+Left Click move/swap guard, and harde
 
 Category: compatibility  
 Target: Aegis: Exchange  
-Source-audited versions: Aegis: Exchange 1.53.16 (upstream main commit `3b69fac3bf141d8310996f5012406b5ea58f5971`) and the user's installed Aegis: Exchange 1.20.2 ZIP  
+Source-audited versions: Aegis: Exchange 1.53.16 (upstream main commit `3b69fac3bf141d8310996f5012406b5ea58f5971`) and Aegis: Exchange 1.20.2 (exact UI audit commit `70f648492607ca1aec6c3df2da42deed21d09c9d`, cross-checked against the user's installed build)  
 Default: enabled  
 Implementation: **IMPLEMENTED**  
-Static/desktop validation: **PASS for new source** — `texluac -p`, focused mocked Aegis/Workbench smoke test, and repository `tools/check.py` logic on a reconstructed validation baseline; exact checker run after overlay on the user's complete local repository remains required  
-In-game validation: **PASS for the current Market Workbench integration path on Aegis 1.20.2** — capability probing, corrected item metadata normalization, Aegis-custom-UI AH detection, scanning/polling, tooltip opening, Reference Listing selection, and the Aegis-backed posting path have all been exercised successfully in OctoWoW.
+Static/desktop validation: **PASS** — full repository `python tools/check.py` plus parse validation of all addon Lua sources pass on the reconstructed push candidate (2026-09-15)  
+In-game validation: **PASS for the phase-1 backend path and the current hosted Market Workbench v1 pricing workflow on Aegis 1.20.2**
 
 Purpose:
 
 Provide one version-aware, capability-probed boundary between OctoTweaks and Aegis internals. Higher-level OctoTweaks modules use `OctoTweaks.Aegis`; they do not bind directly to Aegis frames or scatter `AegisExchange.*` calls through the codebase.
 
-Current probed capabilities include Aegis namespace/load state, scanner start/control, normalized item-info access, Buy category helpers/search, market DB readers, Sell suggestion, direct multi-stack posting, and tooltip extension presence. `/otaegis probe` prints the detected version and capability matrix. Aegis 1.20.2 is source-audited from the user's installed addon ZIP and the capabilities used by the current Market Workbench workflow are runtime-validated in OctoWoW. Capabilities not exercised by that workflow remain probe-backed rather than globally certified.
+The integration boundary is now split by concern: `modules/aegis/Adapter.lua` owns scanner/item/search/database/sell/tooltip internals, while `modules/aegis/UIAdapter.lua` owns the newly required private Aegis UI seam. The UI seam is intentionally stricter than the backend adapter: it activates only on exact Aegis **1.20.2**, whose `ui.OpenWindow`, `ui.SelectSubTab`, dynamic `ui.subtabs`, `ui.panels`, and shared content host were source-audited at commit `70f64849...`.
+
+Current backend capabilities include Aegis namespace/load state, scanner start/control, normalized item-info access, Buy category helpers/search, market DB readers, Sell suggestion, direct multi-stack posting, and tooltip extension presence. `/otaegis probe` prints the detected backend version/capability matrix. The new Workbench UI module reports its private-UI attachment state through `/otmarket status`.
 
 ### `aegis.market_workbench`
 
 Category: feature  
 Target: Aegis: Exchange  
-Source-audited versions: Aegis: Exchange 1.20.2 and 1.53.16  
+Source-audited versions: Aegis: Exchange 1.20.2 and 1.53.16 for the backend path  
 Default: enabled  
-Implementation: **SEARCH / PRICING / DIRECT-POST PROTOTYPE IMPLEMENTED**  
-Static/desktop validation: **PASS for new source** — `texluac -p`, focused mocked Aegis/Workbench smoke tests including a cold-cache bag-item case, and repository `tools/check.py` logic on a reconstructed validation baseline; exact checker run after overlay on the user's complete local repository remains required  
-In-game validation: **PASS for the current phase-1 workflow on Aegis 1.20.2** — the user confirmed Target selection, Similar Search/polling, grouped result interaction, corrected hover/tooltips, `SET`, Suggested Price, and direct `POST` all work correctly while staying on Aegis' custom AH UI.
+Implementation: **SEARCH / PRICING / DIRECT-POST WORKFLOW IMPLEMENTED**  
+Static/desktop validation: **PASS** — full repository `python tools/check.py`, addon-wide Lua parse validation, and the existing focused Workbench smoke coverage pass on the reconstructed push candidate (2026-09-15)  
+In-game validation: **PASS for phase 1 on Aegis 1.20.2** — the user confirmed Target selection, Similar Search/polling, grouped result interaction, corrected hover/tooltips, `SET`, Suggested Price, and direct `POST` all work correctly while staying on Aegis' custom AH UI.
 
 Purpose:
 
-Prototype the Market Workbench workflow while reusing Aegis for AH querying/scanning and existing tooltip economics.
+Provide the Market Workbench Target/Reference/pricing workflow while reusing Aegis for AH querying/scanning and posting.
 
-Implemented in this slice:
+Implemented baseline:
 
-- `/otmarket` opens a two-column prototype window;
+- standalone `/otmarket` two-column presentation remains available as a fallback/debug path;
 - Target Item can be selected from a real bag item and remains independent of Reference Listing; cold 1.12 item-cache misses are warmed/retried instead of being treated as permanent failures;
 - Similar Search derives item class, subclass, equipment slot, and `requiredLevel +/- N` from the target;
 - optional `Buyout only` and `Exact quality` controls are directly available in the workbench;
@@ -160,9 +162,34 @@ Implemented in this slice:
 - direct `POST` controls delegate stack assembly/submission to Aegis `sell.StartPosting`, with stack count, number of auctions, 6h/24h/72h duration, progress and cancellation;
 - closing/stopping a Workbench-owned scan or Workbench-owned posting job only stops that owned operation.
 
-Not implemented yet: Workbench deposit/net/vendor-margin panel, `POST + NEXT`, automatic reference policies, inventory valuation, background scanning, freshness UI, analytics, or embedding the Workbench as an Aegis-native sub-tab.
+### `aegis.market_workbench_ui`
 
-Authoritative Aegis audit, internals/stability assessment, prototype limitations, and exact runtime test procedure: `docs/modules/aegis.md`. Active handoff: `docs/work/active/market-workbench.md`.
+Category: feature / UI integration  
+Target: Aegis: Exchange **1.20.2 exact private UI seam**  
+Default: enabled  
+Implementation: **IMPLEMENTED — MARKET WORKBENCH V1 BASELINE**  
+Static/desktop validation: **PASS** — full repository `python tools/check.py`, addon-wide Lua parse validation, and focused mocked SellValue/Aegis vendor-source, gain-color/layout, quick-target/auto-search/auto-reference coverage pass on the reconstructed push candidate (2026-09-15)  
+In-game validation: **PASS for the current v1 pricing workflow on Aegis 1.20.2** — integrated tab/layout, plain-right-click Target selection, embedded controls, automatic Similar Search, automatic first-price Reference selection, persisted Percent-5 pricing, Suggested Price, and SellValue-backed vendor/gain display are confirmed in the real client
+
+Purpose and behavior:
+
+- adds a `Workbench` sub-tab to Aegis externally, without changing Aegis files;
+- attaches through the exact 1.20.2 `ui.subtabs` / `ui.panels` dispatcher seam after Aegis builds its own window;
+- reuses the existing runtime-validated Workbench frame rather than reimplementing Aegis Buy/Sell result views;
+- temporarily raises a too-short Aegis host window to 620 frame units while Workbench is selected, then restores the previous height before another Aegis tab refreshes; a user resize performed while Workbench is open is not undone;
+- `/otmarket` routes to the integrated tab while the Aegis AH window is open and falls back to the standalone frame otherwise;
+- while the integrated Workbench tab is active, a plain right-click on a bag item selects it as Target Item; modified right-clicks and right-clicks outside Workbench keep their normal behavior;
+- that plain-right-click path is now the quick workflow: after Target metadata resolves it starts Similar Search automatically and, when the scan completes, selects the first priced result (the cheapest first sorted group) as Reference Listing; manual drag/slash Target selection still keeps the explicit/manual workflow;
+- the existing Match/Flat/Percent undercut preset is left untouched, so automatic Reference selection immediately produces the Suggested Price using the user's current pricing preset;
+- a `Gain vs vendor` line is displayed in its own readable row below Suggested Price as the gross per-item difference `Suggested Price - vendor value`; vendor resolution now prefers the optional SellValue addon's read-only global `SellValues["item:<id>"]` database (the same data used by its bag tooltip) and falls back to Aegis market data when SellValue is absent/missing the item; the resolved value is also mirrored into the Workbench `Target market ... vendor:` text; negative/zero values are grey, positive defaults are green `<10s`, yellow `<40s`, orange `<70s`, red `<1g`, purple `>=1g`; `/otmarket gains <green> <yellow> <orange> <red>` changes the four cutoffs in silver and persists them, while `/otmarket gains reset` restores defaults;
+- the embedded Target drop box is explicitly re-enabled/raised and gains a mouse-up fallback because the first runtime pass showed that the standalone `OnReceiveDrag` path was not delivered reliably after reparenting;
+- after reparenting, the complete Workbench child-frame tree is rebased above the Aegis content layer; the second runtime pass showed that parent FontStrings remained visible while pre-existing buttons/edit boxes/check buttons/results controls stayed at stale frame levels and were hidden/non-interactive;
+- leaving the Workbench tab retains the existing ownership rule: Workbench-owned scanning/posting is cancelled, while unrelated Aegis work is not touched;
+- if the exact UI probe fails or Aegis is not 1.20.2, this module stays unavailable and the validated standalone Workbench/backend modules remain isolated.
+
+Not implemented yet: AH-cut/deposit-aware net-margin economics, `POST + NEXT`, advanced/smart automatic reference policies, inventory valuation, background scanning, freshness UI, or analytics. The current deterministic first-priced-result auto-reference path and SellValue-backed gross Suggested-vs-vendor comparison are runtime-confirmed as the v1 baseline. `POST + NEXT` and safer/smarter auto-pricing remain follow-up milestones.
+
+Authoritative Aegis audit, internals/stability assessment, and exact runtime procedures: `docs/modules/aegis.md`. Active handoff: `docs/work/active/market-workbench.md`.
 
 ## Known limitations
 
@@ -173,5 +200,7 @@ Authoritative Aegis audit, internals/stability assessment, prototype limitations
 - The extra-action-bars module has been observed in the real OctoWoW client; the exact deployment path used for that runtime observation is not recorded as a validation of `addon_update.bat` itself.
 - `pfui.libpredict_fix` remains in-game validation pending.
 - `wow.extra_action_bars` still has no generic range/usability tinting, macro cooldown inference, direct SuperMacro drag/drop, or profile/QuickLayout integration; regular-macro drag/drop after the `PickupMacro()` identity-capture fix is runtime-validation pending.
-- `aegis.integration` and `aegis.market_workbench` are runtime-validated for the current phase-1 flow on Aegis 1.20.2: load/probe, Target metadata, Similar Search/polling, grouped result interaction, tooltip hover, `SET`, Suggested Price, and Aegis-backed `POST` are confirmed working.
-- The Workbench is still a separate OctoTweaks window. Deep integration into the Aegis UI is the next active milestone; `POST + NEXT`, automatic reference policies, advanced economics, inventory analytics, background scanning, and analytics remain future work.
+- `aegis.integration` and `aegis.market_workbench` are runtime-validated for the phase-1 flow on Aegis 1.20.2: load/probe, Target metadata, Similar Search/polling, grouped result interaction, tooltip hover, `SET`, Suggested Price, and Aegis-backed `POST` are confirmed working.
+- `aegis.market_workbench_ui` is runtime-confirmed on exact Aegis 1.20.2 for the current v1 pricing workflow: enablement, single-tab attachment, embedded layout/controls, plain-right-click Target selection, automatic `Target → Similar Search → first priced Reference → Suggested Price`, persisted Percent-5 pricing, and the corrected SellValue-backed vendor/gain display all work in game. SellValue remains optional and Aegis remains the fallback vendor source.
+- The integrated tab reuses the existing Workbench presentation rather than Aegis' Buy/Sell row widgets. This preserves the validated Target/Reference workflow and avoids a second general Buy/Sell implementation; tab switching, interaction regression, operation cleanup, and pfUI fit still need the remaining real-client pass.
+- `POST + NEXT`, advanced/smart reference policies, fee/deposit-aware economics, inventory analytics, background scanning, and analytics remain future work.
