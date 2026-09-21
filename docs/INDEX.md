@@ -20,8 +20,8 @@ Use this file as a router. Read only what is relevant to the current task.
 ## Target addons / systems
 
 - `modules/pfui.md` — pfUI integration knowledge and module catalog.
-- `modules/wow.md` — WoW/OctoWoW client-level features, including virtual extra action bars.
-- `modules/aegis.md` — Aegis Exchange 1.53.16 audit, adapter contract, Market Workbench prototype, and runtime test procedure.
+- `modules/wow.md` — WoW/OctoWoW client-level features, including virtual extra action bars and Warrior Smart Action.
+- `modules/aegis.md` — Aegis Exchange adapter/UI audits through current 1.53.29, Market Workbench behavior, and runtime regression procedures.
 
 Add a target document when the first module for a new addon/system is introduced.
 
@@ -33,7 +33,8 @@ Add a target document when the first module for a new addon/system is introduced
 
 ## Work handoff
 
-- `work/active/` — significant unfinished tasks only.
-- `work/active/extra-action-bars.md` — first runtime-validation handoff for `wow.extra_action_bars`.
-- `work/active/market-workbench.md` — Aegis adapter/Market Workbench prototype runtime-validation handoff.
-- `work/completed/` — finalized handoff notes worth retaining.
+- `work/active/` — significant unfinished tasks only. There is currently no active handoff beyond its README.
+- `work/completed/2026-09-21-market-workbench-stable-baseline.md` — retained Aegis/Workbench slot-fallback implementation and runtime-acceptance history.
+- `work/completed/2026-09-21-extra-action-bars-stable-baseline.md` — retained OTBars implementation/runtime history.
+- `work/completed/2026-09-21-warrior-assist-stable-baseline.md` — retained Warrior Assist implementation/runtime history.
+- `work/completed/` — finalized handoff notes worth retaining; these are historical evidence, not current status.

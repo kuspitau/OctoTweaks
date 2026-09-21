@@ -14,4 +14,4 @@ Suggested sections:
 - Validation performed
 - Validation remaining
 
-Remove or move the note when the work is complete; do not let this directory become a stale TODO archive.
+Remove or move the note as soon as the user accepts the work/current baseline. `ACTIVE` means there is a concrete unresolved implementation or validation item now; this directory must not become a stale TODO archive.

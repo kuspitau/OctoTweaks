@@ -4,9 +4,11 @@
 -- dependency on Aegis presentation internals used by OctoTweaks. Higher-level
 -- modules register a view through this adapter and never touch AegisExchange.ui.
 --
--- Exact private-UI source audited for this extension seam:
+-- Exact private-UI sources audited for this extension seam:
 -- Aegis: Exchange 1.20.2, upstream commit
 -- 70f648492607ca1aec6c3df2da42deed21d09c9d.
+-- Aegis: Exchange 1.53.29, upstream main commit
+-- 924ce71fee75a61bec08983243385a53ee71ddbc.
 
 local OT = OctoTweaks
 local adapter = OT.Aegis
@@ -34,8 +36,20 @@ adapter.uiExtension = adapter.uiExtension or {
 
 local state = adapter.uiExtension
 
-local UI_VERSION = "1.20.2"
-local UI_AUDIT_COMMIT = "70f648492607ca1aec6c3df2da42deed21d09c9d"
+local UI_TESTED_VERSION = "1.53.29"
+local UI_AUDITS = {
+  ["1.20.2"] = "70f648492607ca1aec6c3df2da42deed21d09c9d",
+  ["1.53.29"] = "924ce71fee75a61bec08983243385a53ee71ddbc",
+}
+
+local function uiAuditCommit(version)
+  if version == nil then return nil end
+  return UI_AUDITS[tostring(version)]
+end
+
+local function auditedVersionsText()
+  return "1.20.2 and 1.53.29"
+end
 
 local function uiFailure(reason)
   state.disabled = true
@@ -57,9 +71,10 @@ function adapter:ProbeWorkbenchUIHost()
   end
 
   local version = self:GetVersion()
-  if version ~= UI_VERSION then
-    return false, "Aegis private UI extension is source-audited only for 1.20.2; detected "
-      .. tostring(version or "unknown")
+  local auditCommit = uiAuditCommit(version)
+  if not auditCommit then
+    return false, "Aegis private UI extension is source-audited only for "
+      .. auditedVersionsText() .. "; detected " .. tostring(version or "unknown")
   end
 
   local ui = A.ui
@@ -76,8 +91,9 @@ function adapter:ProbeWorkbenchUIHost()
     return false, "Aegis ui.SelectSubTab missing"
   end
 
-  return true, "Aegis 1.20.2 extensible sub-tab host detected (audit "
-    .. string.sub(UI_AUDIT_COMMIT, 1, 8) .. ")"
+  return true, "Aegis " .. tostring(version)
+    .. " extensible sub-tab host detected (audit "
+    .. string.sub(auditCommit, 1, 8) .. ")"
 end
 
 local function repaintUnselectedTab(tab)
@@ -157,7 +173,7 @@ function adapter:EnsureUIExtensionAttached()
     return false, "Aegis window has not been built yet"
   end
   if type(ui.subtabs) ~= "table" or type(ui.panels) ~= "table" or not ui.content then
-    return uiFailure("Aegis 1.20.2 sub-tab/panel tables are not present after BuildWindow")
+    return uiFailure("Aegis audited sub-tab/panel tables are not present after BuildWindow")
   end
 
   local key = state.key
@@ -178,7 +194,7 @@ function adapter:EnsureUIExtensionAttached()
   state.tab = tab
   state.panel = panel
   state.attached = true
-  state.reason = "Aegis 1.20.2 Workbench sub-tab attached"
+  state.reason = "Aegis " .. tostring(self:GetVersion() or "unknown") .. " Workbench sub-tab attached"
 
   if state.spec.onAttach then
     local ok, err = pcall(state.spec.onAttach, panel, tab)
@@ -364,7 +380,8 @@ function adapter:InstallUIExtension(spec)
   end
 
   installCloseDriver()
-  state.reason = state.attached and "Aegis 1.20.2 Workbench sub-tab attached"
+  state.reason = state.attached
+    and ("Aegis " .. tostring(self:GetVersion() or "unknown") .. " Workbench sub-tab attached")
     or "Aegis UI hook installed; attachment deferred until first Aegis window build"
   return true, state.reason
 end
@@ -409,10 +426,12 @@ function adapter:IsUIExtensionActive(key)
 end
 
 function adapter:GetUIExtensionDiagnostics()
+  local version = self:GetVersion()
   return {
-    version = self:GetVersion(),
-    auditedVersion = UI_VERSION,
-    auditCommit = UI_AUDIT_COMMIT,
+    version = version,
+    auditedVersion = UI_TESTED_VERSION,
+    auditCommit = UI_AUDITS[UI_TESTED_VERSION],
+    detectedAuditCommit = uiAuditCommit(version),
     installed = state.installed,
     attached = state.attached,
     active = self:IsUIExtensionActive(state.key),

@@ -51,7 +51,7 @@ Reference validation target:
 
 - pfUI 5.5.4.
 
-Runtime validation remains required in OctoWoW.
+Runtime validation: **PASS by sustained user observation (2026-09-21)**. The historical gathering/mining-related libpredict error has not recurred for a long period during normal OctoWoW use, and the user considers the fix closed. This records acceptance of the current behavior; it does not claim a newly instrumented reproduction of the original malformed event.
 
 ## Planned pfUI work
 

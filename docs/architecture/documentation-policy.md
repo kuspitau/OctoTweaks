@@ -64,19 +64,46 @@ When a change affects:
 
 Do not update every file mechanically.
 
-## Validation wording
+## State and validation model
 
-Use explicit labels such as:
+Keep implementation state, validation evidence, and work lifecycle separate. Do not use `PENDING` as a permanent catch-all.
 
-- `IMPLEMENTED`
-- `STATIC VALIDATION: PASS`
-- `IN-GAME VALIDATION: PENDING`
+### Work lifecycle
 
-Never convert `PENDING` to `PASS` based on code inspection alone.
+- `ACTIVE` — a concrete issue/change is currently open and needs more implementation or validation. It should normally have a note in `docs/work/active/` when the handoff is significant.
+- `STABLE` — the current intended baseline is implemented, static checks pass where applicable, and the user has accepted the relevant real-client behavior. A stable module may still have documented limitations or future enhancements.
+- `BLOCKED` — use only when progress is genuinely prevented by an external dependency/evidence gap. State the blocker exactly.
 
-A conversation agent must not claim that `addon_update.bat` or an in-game test passed unless the user actually ran it and supplied the result, or the execution environment genuinely performed that exact check.
+### Validation evidence
 
-When an agent cannot perform an in-game test, document the exact manual steps needed.
+Use explicit labels when detailed status is needed:
+
+- `IMPLEMENTED` — code exists; says nothing by itself about runtime correctness.
+- `STATIC VALIDATION: PASS` — repository/source/tool checks actually ran successfully.
+- `IN-GAME VALIDATION: PENDING` — changed runtime behavior has not yet been exercised.
+- `IN-GAME VALIDATION: PARTIAL` — meaningful runtime evidence exists but a release-relevant changed branch remains untested.
+- `IN-GAME VALIDATION: PASS` — the user has exercised/accepted the relevant current behavior. Acceptance may be based on normal sustained use; do not invent per-branch observations the user did not report.
+- `SOURCE-AUDITED` — third-party source/API structure was inspected. This is compatibility evidence, not a runtime PASS.
+
+A narrow known bug does not automatically downgrade every related module. Mark the affected work item/module `ACTIVE`, while keeping unrelated validated integration layers `STABLE`.
+
+Never convert `PENDING` to `PASS` from code inspection alone. A conversation agent must not claim that `addon_update.bat` or an in-game test passed unless the user supplied that result or the execution environment genuinely performed that exact check.
+
+### Validation debt lifecycle
+
+When the user accepts a feature/module as working:
+
+1. update `CURRENT_STATE.md` to `STABLE`/runtime PASS;
+2. update the authoritative module doc with concise runtime evidence;
+3. remove obsolete `PENDING` language tied to that behavior;
+4. move/delete any corresponding `docs/work/active/` note; retain it under `work/completed/` only if it preserves useful implementation/validation history;
+5. leave future enhancements in `ROADMAP.md`, not as fake validation debt.
+
+A later change should reopen validation only for behavior plausibly affected by that change. Unrelated changes do not reset a stable module to `PENDING`.
+
+### Procedure ownership
+
+`CURRENT_STATE.md` is a dashboard, not a test manual. Keep short current summaries and the exact remaining active validation there. Reusable regression procedures belong in `docs/modules/<target>.md` or `tests/README.md`; temporary staged checklists belong in an active work note only while the work is active.
 
 ## Avoid duplication
 

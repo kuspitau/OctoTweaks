@@ -1,206 +1,45 @@
 # Current State
 
-Last reviewed: 2026-09-15
+Last reviewed: 2026-09-21
 
-This document describes what is true in the repository now. Do not put speculative future work here.
+This document is the compact dashboard of what is true now. Detailed implementation knowledge and reusable validation procedures belong in the module docs; historical task detail belongs in `docs/work/completed/`; future work belongs in `ROADMAP.md`.
 
-## Development/handoff workflow
+State/validation vocabulary is defined in `docs/architecture/documentation-policy.md`.
 
-Status: **DEFINED**
+## Environment and workflow
 
-Current source-of-truth workflow:
-
-- the user's local repository is the active development state;
-- conversation agents normally return `delta_changes.zip` rather than editing GitHub directly;
-- deltas are extracted over repository root;
-- file deletions/renames are handled by a temporary `delete_files.bat` when required;
-- read-only local path discovery can use temporary `get_paths.bat` when required;
-- temporary handoff helpers and `delta_changes.zip` are ignored by Git;
-- root `addon_update.bat` validates and cleanly redeploys the current repository addon into OctoWoW;
-- the user tests locally before committing/pushing stable state to GitHub.
-
-Static validation of this workflow's repository files: **PASS** (`python tools/check.py`, 2026-08-30).
-Windows runtime execution of `addon_update.bat`: **PENDING**.
-
-## Environment target
-
-- Game/API baseline: WoW 1.12 / OctoWoW
-- Lua baseline: conservative Lua 5.0-era compatibility
-- Optional ecosystem: SuperWoW and third-party addons as required per module
+- Game/API baseline: WoW 1.12 / OctoWoW.
+- Lua baseline: conservative Lua 5.0-era compatibility.
+- The user's local repository is the active development source of truth.
+- Conversation-agent changes are normally delivered as repository-relative delta ZIPs, tested locally, then committed/pushed once accepted.
+- `addon_update.bat` validates before replacing the deployed addon. Its exact Windows script path is not separately certified here; routine in-game use confirms the addon/bootstrap itself is operational.
+- Full repository `python tools/check.py`: **PASS** on the state produced by this delta (2026-09-21).
 
 ## Core
 
-Status: **IMPLEMENTED**
+State: **STABLE**
+Implementation: **IMPLEMENTED**
+Runtime: **PASS through routine OctoTweaks use**
 
-Implemented:
+The bootstrap, SavedVariables initialization, module registry/isolation, compatibility probes, retry lifecycle, `/ot` diagnostics, static checker, package builder, and clean deployment script are established baseline infrastructure.
 
-- global OctoTweaks bootstrap;
-- SavedVariables initialization (`OctoTweaksDB`);
-- module registration and isolated activation;
-- compatibility probes;
-- runtime states (`REGISTERED`, `WAITING`, `DISABLED`, `ENABLED`, `ERROR`);
-- retry on addon-load/login events;
-- `/ot` diagnostic commands;
-- static repository checker;
-- package builder;
-- clean local deployment script at repository root.
+## Module dashboard
 
-Static/desktop validation: **PASS** (`python tools/check.py`, 2026-08-30).
-In-game validation: **PENDING**.
+| Module | State | Runtime baseline | Current open issue |
+| --- | --- | --- | --- |
+| `pfui.libpredict_fix` | **STABLE** | pfUI 5.5.4 / OctoWoW; user reports the historical error has not recurred over extended normal use | None currently known |
+| `wow.extra_action_bars` | **STABLE** | OctoWoW; spells/items/icons/move-swap and current regular-macro path accepted by user | Future enhancements only |
+| `wow.warrior_assist` | **STABLE** | Current OctoWoW Warrior setup; user confirms the Smart Action works and closes validation | Tuning remains configurable, not validation debt |
+| `aegis.integration` | **STABLE** | Aegis: Exchange 1.53.29 (`924ce71f...`) runtime-confirmed; 1.20.2 retained as historical runtime baseline | Unknown Aegis versions still fail/diagnose conservatively |
+| `aegis.market_workbench_ui` | **STABLE** | Hosted Workbench works with current Aegis 1.53.29 | Exact private-UI versions remain source-audit gated |
+| `aegis.market_workbench` | **STABLE** | Aegis 1.53.29; Target → Similar Search → Reference → Suggested Price → POST plus slotless-category fallback accepted in game | None currently known |
 
-## Module catalog
+## Known limitations (not validation debt)
 
-### `pfui.libpredict_fix`
-
-Category: compatibility  
-Target: pfUI  
-Reference version: pfUI 5.5.4  
-Default: enabled  
-Implementation: **IMPLEMENTED**  
-Static/desktop validation: **PASS** (`python tools/check.py`, 2026-08-30)  
-In-game validation: **PENDING**
-
-Purpose:
-
-Prevent pfUI `libs/libpredict.lua` from attempting arithmetic on missing cast timestamps when its named `pfPredictionSender` frame receives an incomplete `UNIT_SPELLCAST_START` state.
-
-Implementation strategy:
-
-- external wrapper around `pfPredictionSender`'s existing `OnEvent` handler;
-- only suppresses the problematic player spellcast-start event when `starttime` or `endtime` is not numeric;
-- delegates all other events/states to the original handler;
-- does not modify pfUI files.
-
-Required runtime test:
-
-1. deploy with root `addon_update.bat`;
-2. enable pfUI and OctoTweaks;
-3. run `/ot status` and confirm `pfui.libpredict_fix = ENABLED`;
-4. reproduce mining/gathering that previously caused the `endtime` nil error;
-5. verify no Lua error occurs;
-6. verify ordinary player casts still behave normally;
-7. optionally enable `/ot debug on` and confirm malformed cast events are reported when reproduced.
-
-### `wow.extra_action_bars`
-
-Category: feature  
-Target: WoW 1.12 / OctoWoW client UI  
-Default: enabled  
-Implementation: **IMPLEMENTED — runtime iteration 6**  
-Static/desktop validation: **PARTIAL** — `texluac -p`, focused source/doc guard checks, and a mocked frame-construction smoke test PASS (2026-09-01); full repository `python tools/check.py` still required on an overlaid repository snapshot  
-In-game validation: **PARTIAL; item handling/icons confirmed, iteration-6 regular-macro drag/drop retest required**
-
-Purpose:
-
-Provide 96 persistent virtual action slots, independent of Blizzard's native action-slot ids, grouped into up to eight configurable bars. Slots support spells, items, regular macros, and optional SuperMacros, with native bindings that remain active when visual bars are hidden.
-
-Confirmed by the first runtime test:
-
-- four default bars render in OctoWoW;
-- spells can be dropped onto virtual slots and display icons.
-
-Iteration 2 addresses first-runtime UI issues:
-
-- exact-size one-pixel slot borders replace the visually padded native quickslot shell;
-- the native pushed/depressed texture was removed to prevent persistent blue/gold clicked outlines;
-- global button size, icon inset, and slot spacing are persisted and adjustable live;
-- a compact Action Bars settings panel is available by right-clicking `OTB` or `/otb config`; the launcher can be moved with `Ctrl + drag` and toggled with `/otb ui`;
-- the panel exposes active-bar count, visual sizing, lock/unlock, Quick Bind, reset, and selected-bar mode/columns/scale;
-- unlocked bars are moved using the visible `OT1` / `OT2` / ... handles;
-- Shift + left click move/swap now captures Shift on mouse-down so the modifier path cannot fall through to normal action execution on mouse-up.
-- external action drops suppress the destination click generated by the same release, preventing a newly dropped spell/item from firing immediately.
-- item slots support drag/drop plus `/otb item <slot> <name/link/id>` fallback assignment, and item execution prefers concrete bag/equipment locations for equippable items such as fishing poles; runtime confirms item assignment/use works.
-- iteration 5 resolves item icons from concrete bag/equipment texture APIs first and rejects non-string `GetItemInfo()` icon values that can render as solid colored squares on OctoWoW; runtime feedback confirms the corrected item icons now render properly.
-- regular-macro drag/drop now captures the macro identity from `PickupMacro()` instead of trusting the observed OctoWoW cursor token as the macro index; the raw cursor token remains a fallback, while name/index persistence, icon resolution, `UPDATE_MACROS` refresh, and `/otb macro <slot> <name/index>` fallback assignment remain available.
-
-The visual-state fixes, settings UI, Shift+Left Click move/swap guard, and hardened item assignment/use/icon path are implemented and the item path is runtime-confirmed. The current `PickupMacro()`-based regular-macro drag/drop correction remains to be validated in OctoWoW. Detailed behavior, runtime evidence, and test steps are authoritative in `docs/modules/wow.md` and `docs/work/active/extra-action-bars.md`.
-
-### `aegis.integration`
-
-Category: compatibility  
-Target: Aegis: Exchange  
-Source-audited versions: Aegis: Exchange 1.53.16 (upstream main commit `3b69fac3bf141d8310996f5012406b5ea58f5971`) and Aegis: Exchange 1.20.2 (exact UI audit commit `70f648492607ca1aec6c3df2da42deed21d09c9d`, cross-checked against the user's installed build)  
-Default: enabled  
-Implementation: **IMPLEMENTED**  
-Static/desktop validation: **PASS** — full repository `python tools/check.py` plus parse validation of all addon Lua sources pass on the reconstructed push candidate (2026-09-15)  
-In-game validation: **PASS for the phase-1 backend path and the current hosted Market Workbench v1 pricing workflow on Aegis 1.20.2**
-
-Purpose:
-
-Provide one version-aware, capability-probed boundary between OctoTweaks and Aegis internals. Higher-level OctoTweaks modules use `OctoTweaks.Aegis`; they do not bind directly to Aegis frames or scatter `AegisExchange.*` calls through the codebase.
-
-The integration boundary is now split by concern: `modules/aegis/Adapter.lua` owns scanner/item/search/database/sell/tooltip internals, while `modules/aegis/UIAdapter.lua` owns the newly required private Aegis UI seam. The UI seam is intentionally stricter than the backend adapter: it activates only on exact Aegis **1.20.2**, whose `ui.OpenWindow`, `ui.SelectSubTab`, dynamic `ui.subtabs`, `ui.panels`, and shared content host were source-audited at commit `70f64849...`.
-
-Current backend capabilities include Aegis namespace/load state, scanner start/control, normalized item-info access, Buy category helpers/search, market DB readers, Sell suggestion, direct multi-stack posting, and tooltip extension presence. `/otaegis probe` prints the detected backend version/capability matrix. The new Workbench UI module reports its private-UI attachment state through `/otmarket status`.
-
-### `aegis.market_workbench`
-
-Category: feature  
-Target: Aegis: Exchange  
-Source-audited versions: Aegis: Exchange 1.20.2 and 1.53.16 for the backend path  
-Default: enabled  
-Implementation: **SEARCH / PRICING / DIRECT-POST WORKFLOW IMPLEMENTED**  
-Static/desktop validation: **PASS** — full repository `python tools/check.py`, addon-wide Lua parse validation, and the existing focused Workbench smoke coverage pass on the reconstructed push candidate (2026-09-15)  
-In-game validation: **PASS for phase 1 on Aegis 1.20.2** — the user confirmed Target selection, Similar Search/polling, grouped result interaction, corrected hover/tooltips, `SET`, Suggested Price, and direct `POST` all work correctly while staying on Aegis' custom AH UI.
-
-Purpose:
-
-Provide the Market Workbench Target/Reference/pricing workflow while reusing Aegis for AH querying/scanning and posting.
-
-Implemented baseline:
-
-- standalone `/otmarket` two-column presentation remains available as a fallback/debug path;
-- Target Item can be selected from a real bag item and remains independent of Reference Listing; cold 1.12 item-cache misses are warmed/retried instead of being treated as permanent failures;
-- Similar Search derives item class, subclass, equipment slot, and `requiredLevel +/- N` from the target;
-- optional `Buyout only` and `Exact quality` controls are directly available in the workbench;
-- Aegis scanner owns page pacing/query transport; OctoTweaks reads each already-loaded result page and preserves item link, stack, seller, quality, buyout, and per-unit price;
-- results are grouped by item id + displayed name and can expand to individual listings;
-- row hover uses an adapter-normalized GameTooltip path that avoids vanilla `Unknown link type` on full coloured AH links while still allowing Aegis' existing tooltip hook to enrich the tooltip once;
-- `SET` selects an independent Reference Listing and does not replace Target Item;
-- suggested per-unit price supports Match, Flat, and Percent undercut modes; default is Flat 1 copper;
-- Workbench refuses to steal the AH query channel while an Aegis scan is running/paused, a Buy query is active, or posting is active;
-- direct `POST` controls delegate stack assembly/submission to Aegis `sell.StartPosting`, with stack count, number of auctions, 6h/24h/72h duration, progress and cancellation;
-- closing/stopping a Workbench-owned scan or Workbench-owned posting job only stops that owned operation.
-
-### `aegis.market_workbench_ui`
-
-Category: feature / UI integration  
-Target: Aegis: Exchange **1.20.2 exact private UI seam**  
-Default: enabled  
-Implementation: **IMPLEMENTED — MARKET WORKBENCH V1 BASELINE**  
-Static/desktop validation: **PASS** — full repository `python tools/check.py`, addon-wide Lua parse validation, and focused mocked SellValue/Aegis vendor-source, gain-color/layout, quick-target/auto-search/auto-reference coverage pass on the reconstructed push candidate (2026-09-15)  
-In-game validation: **PASS for the current v1 pricing workflow on Aegis 1.20.2** — integrated tab/layout, plain-right-click Target selection, embedded controls, automatic Similar Search, automatic first-price Reference selection, persisted Percent-5 pricing, Suggested Price, and SellValue-backed vendor/gain display are confirmed in the real client
-
-Purpose and behavior:
-
-- adds a `Workbench` sub-tab to Aegis externally, without changing Aegis files;
-- attaches through the exact 1.20.2 `ui.subtabs` / `ui.panels` dispatcher seam after Aegis builds its own window;
-- reuses the existing runtime-validated Workbench frame rather than reimplementing Aegis Buy/Sell result views;
-- temporarily raises a too-short Aegis host window to 620 frame units while Workbench is selected, then restores the previous height before another Aegis tab refreshes; a user resize performed while Workbench is open is not undone;
-- `/otmarket` routes to the integrated tab while the Aegis AH window is open and falls back to the standalone frame otherwise;
-- while the integrated Workbench tab is active, a plain right-click on a bag item selects it as Target Item; modified right-clicks and right-clicks outside Workbench keep their normal behavior;
-- that plain-right-click path is now the quick workflow: after Target metadata resolves it starts Similar Search automatically and, when the scan completes, selects the first priced result (the cheapest first sorted group) as Reference Listing; manual drag/slash Target selection still keeps the explicit/manual workflow;
-- the existing Match/Flat/Percent undercut preset is left untouched, so automatic Reference selection immediately produces the Suggested Price using the user's current pricing preset;
-- a `Gain vs vendor` line is displayed in its own readable row below Suggested Price as the gross per-item difference `Suggested Price - vendor value`; vendor resolution now prefers the optional SellValue addon's read-only global `SellValues["item:<id>"]` database (the same data used by its bag tooltip) and falls back to Aegis market data when SellValue is absent/missing the item; the resolved value is also mirrored into the Workbench `Target market ... vendor:` text; negative/zero values are grey, positive defaults are green `<10s`, yellow `<40s`, orange `<70s`, red `<1g`, purple `>=1g`; `/otmarket gains <green> <yellow> <orange> <red>` changes the four cutoffs in silver and persists them, while `/otmarket gains reset` restores defaults;
-- the embedded Target drop box is explicitly re-enabled/raised and gains a mouse-up fallback because the first runtime pass showed that the standalone `OnReceiveDrag` path was not delivered reliably after reparenting;
-- after reparenting, the complete Workbench child-frame tree is rebased above the Aegis content layer; the second runtime pass showed that parent FontStrings remained visible while pre-existing buttons/edit boxes/check buttons/results controls stayed at stale frame levels and were hidden/non-interactive;
-- leaving the Workbench tab retains the existing ownership rule: Workbench-owned scanning/posting is cancelled, while unrelated Aegis work is not touched;
-- if the exact UI probe fails or Aegis is not 1.20.2, this module stays unavailable and the validated standalone Workbench/backend modules remain isolated.
-
-Not implemented yet: AH-cut/deposit-aware net-margin economics, `POST + NEXT`, advanced/smart automatic reference policies, inventory valuation, background scanning, freshness UI, or analytics. The current deterministic first-priced-result auto-reference path and SellValue-backed gross Suggested-vs-vendor comparison are runtime-confirmed as the v1 baseline. `POST + NEXT` and safer/smarter auto-pricing remain follow-up milestones.
-
-Authoritative Aegis audit, internals/stability assessment, and exact runtime procedures: `docs/modules/aegis.md`. Active handoff: `docs/work/active/market-workbench.md`.
-
-## Known limitations
-
-- No repository-wide OctoTweaks configuration UI yet; `wow.extra_action_bars` now has its own compact settings panel plus launcher and `/otb` commands.
-- Module enable overrides exist in SavedVariables but no public enable/disable slash command is exposed yet.
-- No repository-wide SavedVariables migration framework yet; the extra-bars feature owns an additive versioned subtree.
-- No automated WoW runtime harness; in-game behavior must be validated manually.
-- The extra-action-bars module has been observed in the real OctoWoW client; the exact deployment path used for that runtime observation is not recorded as a validation of `addon_update.bat` itself.
-- `pfui.libpredict_fix` remains in-game validation pending.
-- `wow.extra_action_bars` still has no generic range/usability tinting, macro cooldown inference, direct SuperMacro drag/drop, or profile/QuickLayout integration; regular-macro drag/drop after the `PickupMacro()` identity-capture fix is runtime-validation pending.
-- `aegis.integration` and `aegis.market_workbench` are runtime-validated for the phase-1 flow on Aegis 1.20.2: load/probe, Target metadata, Similar Search/polling, grouped result interaction, tooltip hover, `SET`, Suggested Price, and Aegis-backed `POST` are confirmed working.
-- `aegis.market_workbench_ui` is runtime-confirmed on exact Aegis 1.20.2 for the current v1 pricing workflow: enablement, single-tab attachment, embedded layout/controls, plain-right-click Target selection, automatic `Target → Similar Search → first priced Reference → Suggested Price`, persisted Percent-5 pricing, and the corrected SellValue-backed vendor/gain display all work in game. SellValue remains optional and Aegis remains the fallback vendor source.
-- The integrated tab reuses the existing Workbench presentation rather than Aegis' Buy/Sell row widgets. This preserves the validated Target/Reference workflow and avoids a second general Buy/Sell implementation; tab switching, interaction regression, operation cleanup, and pfUI fit still need the remaining real-client pass.
-- `POST + NEXT`, advanced/smart reference policies, fee/deposit-aware economics, inventory analytics, background scanning, and analytics remain future work.
+- No repository-wide configuration UI; feature-specific UIs exist where needed.
+- Module enable overrides exist in SavedVariables but no general public enable/disable command is exposed.
+- No repository-wide SavedVariables migration framework; feature-owned additive schemas are used where required.
+- No automated real-client WoW harness; runtime acceptance remains manual.
+- Extra Action Bars intentionally does not yet provide generic range/usability tinting, direct SuperMacro drag/drop, or QuickLayout/profile integration.
+- Warrior Assist's internal swing tracker is intended for the current 2H / one-hand-plus-shield use case; dual-wield disambiguation is not claimed.
+- Workbench future features such as `POST + NEXT`, guarded smart-reference policies, fee/deposit-aware economics, inventory analytics, background scanning, freshness UI, and deeper analytics are roadmap items, not current validation failures.

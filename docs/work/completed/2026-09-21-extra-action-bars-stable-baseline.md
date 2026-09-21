@@ -1,14 +1,15 @@
-# Extra Action Bars runtime-validation handoff
+# Extra Action Bars — completed stable-baseline record
 
 ## Objective
 
 Add persistent virtual action bars to OctoTweaks so the user can keep substantially more action/qbind pairs than the native Blizzard action-slot layout exposes, with action-bar-like buttons and on-demand visibility.
 
-## Current status
+## Final status
 
-Implementation: **ITERATION 6 IMPLEMENTED**  
-Static/desktop validation: **PARTIAL** — Lua syntax and focused macro cursor/execution smoke tests PASS; full repository checker still required after overlay  
-OctoWoW in-game validation: **PARTIAL; items and item icons confirmed, iteration-6 regular-macro drag/drop retest required**
+Work lifecycle: **COMPLETED / STABLE baseline accepted 2026-09-21**
+Implementation: **ITERATION 6 IMPLEMENTED**
+Static/desktop validation: **PASS in final repository validation**
+OctoWoW in-game validation: **PASS by user acceptance**, including the current regular-macro path
 
 ## Runtime evidence received
 
@@ -120,4 +121,9 @@ Iteration 6 changes:
 - after runtime evidence showed the OctoWoW macro cursor token could map to the wrong macro, captures the source macro from `PickupMacro()` and uses the captured identity for OTBar drops; raw cursor-index handling is now fallback only;
 - keeps qbind execution routed through `RunMacro` and preserves macro assignments through existing slot SavedVariables.
 
-Focused desktop smoke coverage verifies numeric cursor tokens, string cursor tokens, numeric-icon resolution, and macro execution by stored slot. Runtime drag/drop validation remains **PENDING**.
+Focused desktop smoke coverage verifies numeric cursor tokens, string cursor tokens, numeric-icon resolution, and macro execution by stored slot. The user subsequently reported the current macro behavior appears correct and explicitly closed OTBars validation on 2026-09-21.
+
+
+## Closure
+
+This note is historical implementation/validation context. Current truth is `docs/CURRENT_STATE.md` and `docs/modules/wow.md`. Future enhancements do not reopen this baseline unless they change affected runtime behavior.

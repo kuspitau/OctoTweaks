@@ -12,6 +12,7 @@ core\Modules.lua
 core\Diagnostics.lua
 modules\pfui\LibPredictFix.lua
 modules\wow\ExtraActionBars.lua
+modules\wow\WarriorAssist.lua
 modules\aegis\Adapter.lua
 modules\aegis\UIAdapter.lua
 modules\aegis\MarketWorkbench.lua

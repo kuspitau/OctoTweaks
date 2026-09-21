@@ -1,0 +1,32 @@
+OctoTweaks cumulative delta — 2026-09-21
+
+Base:
+- the local repository ZIP supplied in this conversation;
+- safe to use even if the earlier audit delta was not applied.
+
+Contents:
+- closes pfui.libpredict_fix, wow.extra_action_bars, and wow.warrior_assist as stable/user-accepted baselines;
+- records Aegis 1.53.29 integration/hosted Workbench UI as runtime-accepted;
+- fixes Workbench Similar Search for equipment subclasses where Aegis exposes zero AH SlotOptions: invType remains nil instead of refusing the search;
+- keeps exact slot matching when Aegis does expose slot options;
+- restructures CURRENT_STATE as a compact state dashboard;
+- formalizes ACTIVE/STABLE and validation-evidence lifecycle rules in documentation-policy;
+- moves OTBars and Warrior Assist handoff history to docs/work/completed;
+- leaves only the targeted Workbench regression as active work.
+
+Apply:
+1. Extract this ZIP over repository root.
+2. Run delete_files.bat once to remove the two obsolete active-work note paths.
+3. Run python tools/check.py (or tools\check.bat).
+4. Deploy/test normally.
+
+Remaining in-game regression after application:
+- armor with real AH slot dimension;
+- known-good 1H weapon;
+- staff or 2H mace;
+- gun;
+- shield;
+- optional wand/other ranged family;
+- confirm Similar Search -> automatic Reference -> Suggested Price.
+
+If that matrix passes, aegis.market_workbench can be promoted from ACTIVE to STABLE and its active note moved to work/completed.

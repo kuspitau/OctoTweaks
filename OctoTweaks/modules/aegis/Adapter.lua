@@ -3,8 +3,9 @@ Module: aegis.integration
 Category: compatibility
 Target: Aegis: Exchange
 Source-audited against:
-- Aegis: Exchange 1.53.16 (upstream main commit 3b69fac3bf141d8310996f5012406b5ea58f5971)
-- Aegis: Exchange 1.20.2 (user-supplied installed addon ZIP, audited 2026-09-13)
+- Aegis: Exchange 1.53.29 (upstream commit 924ce71fee75a61bec08983243385a53ee71ddbc; runtime-confirmed 2026-09-21)
+- Aegis: Exchange 1.53.16 (historical upstream commit 3b69fac3bf141d8310996f5012406b5ea58f5971)
+- Aegis: Exchange 1.20.2 (historical runtime baseline commit 70f648492607ca1aec6c3df2da42deed21d09c9d)
 
 Purpose:
 Centralize all OctoTweaks access to AegisExchange internals behind capability
@@ -21,11 +22,16 @@ local OT = OctoTweaks
 OT.Aegis = OT.Aegis or {}
 local adapter = OT.Aegis
 
-adapter.testedVersion = "1.53.16"
-adapter.testedCommit = "3b69fac3bf141d8310996f5012406b5ea58f5971"
+adapter.testedVersion = "1.53.29"
+adapter.testedCommit = "924ce71fee75a61bec08983243385a53ee71ddbc"
 adapter.sourceAuditedVersions = {
-  ["1.53.16"] = "upstream main 3b69fac3bf141d8310996f5012406b5ea58f5971",
-  ["1.20.2"] = "user-supplied installed addon ZIP audited 2026-09-13",
+  ["1.53.29"] = "upstream 924ce71fee75a61bec08983243385a53ee71ddbc",
+  ["1.53.16"] = "historical upstream 3b69fac3bf141d8310996f5012406b5ea58f5971",
+  ["1.20.2"] = "historical runtime baseline 70f648492607ca1aec6c3df2da42deed21d09c9d",
+}
+adapter.runtimeValidatedVersions = {
+  ["1.53.29"] = true,
+  ["1.20.2"] = true,
 }
 adapter.capabilities = adapter.capabilities or {}
 adapter.capabilityReasons = adapter.capabilityReasons or {}
@@ -63,6 +69,11 @@ end
 function adapter:IsSourceAuditedVersion(version)
   version = version or self:GetVersion()
   return version and self.sourceAuditedVersions[tostring(version)] ~= nil
+end
+
+function adapter:IsRuntimeValidatedVersion(version)
+  version = version or self:GetVersion()
+  return version and self.runtimeValidatedVersions[tostring(version)] == true
 end
 
 function adapter:RefreshCapabilities()
@@ -194,16 +205,25 @@ function adapter:ResolveAuctionFilters(target)
 
   local slotIndex, slotName
   if target.equipLoc and target.equipLoc ~= "" then
-    local localizedSlot = OT:GetGlobal(target.equipLoc)
-    if localizedSlot then
-      local slotOk, slotOptions = pcall(A.buy.SlotOptions, classIndex, subclassIndex)
-      if not slotOk then
-        return nil, "Aegis SlotOptions error: " .. tostring(slotOptions)
-      end
-      slotIndex, slotName = findExactOption(slotOptions, localizedSlot)
+    local slotOk, slotOptions = pcall(A.buy.SlotOptions, classIndex, subclassIndex)
+    if not slotOk then
+      return nil, "Aegis SlotOptions error: " .. tostring(slotOptions)
     end
-    if not slotIndex then
-      return nil, "AH equipment slot not resolved for: " .. tostring(target.equipLoc)
+
+    -- GetAuctionInvTypes(class, subclass) describes only the additional AH
+    -- slot filters that exist for this category. Some equipment subclasses
+    -- (for example staves, guns, 2H maces, or shields on the tested client)
+    -- are already specific enough that Aegis legitimately exposes no slot
+    -- options at all. In that case class + subclass is the complete server
+    -- filter and invType must remain nil rather than refusing the search.
+    if slotOptions and table.getn(slotOptions) > 0 then
+      local localizedSlot = OT:GetGlobal(target.equipLoc)
+      if localizedSlot then
+        slotIndex, slotName = findExactOption(slotOptions, localizedSlot)
+      end
+      if not slotIndex then
+        return nil, "AH equipment slot not resolved for: " .. tostring(target.equipLoc)
+      end
     end
   end
 
@@ -905,14 +925,14 @@ function adapter:PrintDiagnostics()
   end
 
   local version = self:GetVersion()
-  if version and self:IsSourceAuditedVersion(version) then
-    if version ~= self.testedVersion then
-      OT:Print("  NOTE: Aegis " .. tostring(version)
-        .. " source was audited from the supplied installed addon; runtime validation is still pending")
-    end
+  if version and self:IsRuntimeValidatedVersion(version) then
+    OT:Print("  validation = runtime PASS")
+  elseif version and self:IsSourceAuditedVersion(version) then
+    OT:Print("  NOTE: Aegis " .. tostring(version)
+      .. " is source-audited but not runtime-validated")
   elseif version then
     OT:Print("  WARNING: structurally probed on unaudited Aegis " .. tostring(version)
-      .. "; source-audited versions are 1.20.2 and " .. self.testedVersion)
+      .. "; source-audited versions are 1.20.2, 1.53.16, and 1.53.29")
   end
 end
 
@@ -921,8 +941,8 @@ local module = {
   category = "compatibility",
   target = "Aegis_Exchange",
   defaultEnabled = true,
-  testedVersion = "1.53.16",
-  sourceAuditedVersions = "1.20.2, 1.53.16",
+  testedVersion = "1.53.29",
+  sourceAuditedVersions = "1.20.2, 1.53.16, 1.53.29",
 }
 
 function module:probe()
@@ -944,9 +964,9 @@ end
 function module:enable()
   adapter:RefreshCapabilities()
   local version = adapter:GetVersion()
-  if version and adapter:IsSourceAuditedVersion(version) and version ~= self.testedVersion then
+  if version and adapter:IsSourceAuditedVersion(version) and not adapter:IsRuntimeValidatedVersion(version) then
     OT:Print("aegis.integration enabled on source-audited Aegis " .. tostring(version)
-      .. "; OctoWoW runtime validation is pending")
+      .. "; this exact version is not runtime-validated")
   elseif version and not adapter:IsSourceAuditedVersion(version) then
     OT:Print("aegis.integration enabled on structurally compatible but unaudited Aegis "
       .. tostring(version))

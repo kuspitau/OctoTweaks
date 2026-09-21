@@ -2,10 +2,10 @@
 Module: aegis.market_workbench
 Category: feature
 Target: Aegis: Exchange
-Source-audited against Aegis: Exchange 1.20.2 and 1.53.16
-Runtime validation: pending
+Source-audited against Aegis: Exchange 1.20.2, 1.53.16, and 1.53.29
+Runtime validation: PASS on the current Aegis 1.53.29 integration baseline; targeted Similar Search slot-fallback correction pending in-game regression
 
-Prototype scope:
+Core scope:
 - keep a Target Item selected from the player's bags;
 - build a simple Similar Search from class/subclass/equipment slot and
   required-level +/- N;
@@ -16,8 +16,9 @@ Prototype scope:
 - compute Match, Flat, or Percent undercut suggestions.
 
 Direct posting is exposed through Aegis's own multi-stack posting engine.
-Background scanning, inventory analytics, smart reference policies, and deep
-embedding into the Aegis window remain outside this iteration.
+Background scanning, inventory analytics, and guarded smart reference policies
+remain outside this module. Aegis-window hosting is provided separately by
+aegis.market_workbench_ui.
 ]]
 
 local OT = OctoTweaks
@@ -1148,8 +1149,8 @@ local module = {
   category = "feature",
   target = "Aegis_Exchange",
   defaultEnabled = true,
-  testedVersion = "1.53.16",
-  sourceAuditedVersions = "1.20.2, 1.53.16",
+  testedVersion = "1.53.29",
+  sourceAuditedVersions = "1.20.2, 1.53.16, 1.53.29",
 }
 
 function module:probe()

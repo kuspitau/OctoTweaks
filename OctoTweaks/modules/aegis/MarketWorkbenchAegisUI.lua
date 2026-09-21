@@ -1,4 +1,4 @@
--- Market Workbench presentation inside the Aegis 1.20.2 window.
+-- Market Workbench presentation inside source-audited Aegis windows.
 --
 -- All direct Aegis UI access stays in UIAdapter.lua. This module only talks to
 -- OctoTweaks.Aegis and reuses the already runtime-validated Workbench frame.
@@ -516,7 +516,9 @@ function View:InstallRouting()
       .. ", attached=" .. tostring(d.attached)
       .. ", active=" .. tostring(d.active)
       .. ", disabled=" .. tostring(d.disabled))
-    OT:Print("  UI audit: Aegis " .. tostring(d.auditedVersion)
+    OT:Print("  UI audit: detected Aegis " .. tostring(d.version)
+      .. " @ " .. tostring(d.detectedAuditCommit))
+    OT:Print("  latest audited UI baseline: Aegis " .. tostring(d.auditedVersion)
       .. " @ " .. tostring(d.auditCommit))
     OT:Print("  UI reason: " .. tostring(d.reason))
     if d.lastError then OT:Print("  UI last error: " .. tostring(d.lastError)) end
@@ -556,8 +558,8 @@ local module = {
   category = "feature",
   target = "Aegis_Exchange",
   defaultEnabled = true,
-  testedVersion = "1.20.2",
-  sourceAuditedVersions = "1.20.2 UI seam (commit 70f64849)",
+  testedVersion = "1.53.29",
+  sourceAuditedVersions = "1.20.2 UI seam (commit 70f64849), 1.53.29 UI seam (commit 924ce71f)",
 }
 
 function module:probe()
@@ -584,7 +586,7 @@ function module:enable()
   View:InstallQuickWorkflow()
   View:InstallBagTargetHook()
   View:InstallRouting()
-  return true, "Market Workbench Aegis 1.20.2 sub-tab integration ready"
+  return true, "Market Workbench Aegis sub-tab integration ready"
 end
 
 OT:RegisterModule(module)

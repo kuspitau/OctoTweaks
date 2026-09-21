@@ -1,4 +1,7 @@
 <Bindings>
+  <Binding name="OCTOTWEAKS_WARRIORASSIST_ACT" header="OCTOTWEAKS_WARRIORASSIST">
+    OctoTweaks_WarriorAssist_Act();
+  </Binding>
   <Binding name="OCTOTWEAKS_EXTRABARS_TOGGLE" header="OCTOTWEAKS_EXTRABARS">
     OctoTweaks_ExtraBars_Toggle();
   </Binding>

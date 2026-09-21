@@ -2,7 +2,7 @@
 Module: wow.extra_action_bars
 Category: feature
 Target: WoW 1.12 / OctoWoW client UI
-Tested against: partial OctoWoW runtime observation; full runtime validation pending
+Tested against: OctoWoW runtime PASS by user acceptance 2026-09-21
 
 Purpose:
 Provide persistent virtual action slots that are independent of Blizzard's native

@@ -4,76 +4,51 @@ OctoTweaks is a modular compatibility/fix/feature addon for WoW 1.12 on OctoWoW.
 
 ## Current modules
 
-- `pfui.libpredict_fix` — guards pfUI's prediction handler against incomplete `UnitCastingInfo("player")` timestamps observed on OctoWoW/SuperWoW-style spellcast events.
-- `wow.extra_action_bars` — adds 96 persistent virtual action slots with configurable bars, tooltips/cooldowns, native key bindings, quick-bind mode, and always/hover/toggle/hold visibility.
+- `pfui.libpredict_fix` — guards pfUI prediction handling against incomplete player cast timestamps.
+- `wow.extra_action_bars` — 96 persistent virtual action slots with configurable bars, items/spells/macros, native bindings, quick-bind mode, and configurable visibility.
+- `wow.warrior_assist` — manually triggered Warrior Smart Action with configurable rage policy, action priority, diagnostics, and swing-aware Slam gating.
+- `aegis.integration` — capability-probed compatibility boundary around Aegis: Exchange internals.
+- `aegis.market_workbench` — Target/Reference search, pricing, and Aegis-backed posting workflow.
+- `aegis.market_workbench_ui` — externally hosted Workbench sub-tab inside exact source-audited Aegis UI versions, with standalone fallback.
 
-Future modules can target pfUI, pfQuest, Aegis Exchange, the WoW/OctoWoW client itself, or other addons without turning OctoTweaks into a monolithic patch file.
+Current state and known issues are authoritative in `docs/CURRENT_STATE.md`.
 
 ## Local repository workflow
 
-The local repository is the development source of truth. Conversation agents normally deliver repository-relative `delta_changes.zip` archives; the user extracts them over the local repository, applies any required `delete_files.bat`, validates, deploys to the game, tests, then commits/pushes only once stable.
+The local repository is the development source of truth. Conversation agents normally deliver repository-relative delta ZIPs; extract them over repository root, run any included temporary deletion helper when required, validate, deploy/test, then commit/push once accepted.
 
-See:
-
-- `AGENTS.md`
-- `docs/architecture/delta-delivery-policy.md`
+See `AGENTS.md` and `docs/architecture/delta-delivery-policy.md`.
 
 ## Deploy current local addon to OctoWoW
 
-From repository root, double-click:
+From repository root, double-click `addon_update.bat`. Default game root: `C:\Games\OctoWow`.
 
-`addon_update.bat`
-
-Default game root:
-
-`C:\Games\OctoWow`
-
-The script:
-
-1. validates the repository first;
-2. leaves the installed addon untouched if validation fails;
-3. removes the previous `Interface\AddOns\OctoTweaks` deployment completely;
-4. copies the current repository `OctoTweaks\` directory into the game;
-5. verifies that `OctoTweaks.toc` exists after deployment.
-
-You can override the game root from a command prompt:
-
-`addon_update.bat "D:\Games\OctoWow"`
+The script validates first, removes the previous deployed OctoTweaks directory, copies the repository addon, and verifies `OctoTweaks.toc`. An alternate game root may be passed as the first argument.
 
 ## Manual install / distribution
 
-The repository's `OctoTweaks/` directory is the actual addon source. A clean distribution ZIP can be built with:
+The repository `OctoTweaks/` directory is the addon source. Build a clean distribution with:
 
 ```text
 python tools/package.py
 ```
 
-or:
-
-`tools\package.bat`
-
-The package is written under `dist/`.
+or `tools\package.bat`. Output is written under `dist/`.
 
 ## Useful in-game commands
 
-- `/ot status`
-- `/ot modules`
-- `/ot debug on`
-- `/ot debug off`
-- `/otbar config` — open the Extra Action Bars settings panel
-- `/otbar` / `/octobars` — extra action bars help and advanced commands
+- `/ot status` / `/ot modules` — module state.
+- `/ot debug on|off` — core diagnostics.
+- `/otb config` — Extra Action Bars settings; `/otb` shows subsystem help.
+- `/otwa status` — Warrior Assist diagnostics/configuration.
+- `/otaegis probe` — Aegis capability/version diagnostics.
+- `/otmarket` — open/select Market Workbench; `/otmarket status` prints Workbench/Aegis UI state.
+
+Subsystem docs contain complete command sets.
 
 ## Developer validation
 
-Run:
-
-```text
-python tools/check.py
-```
-
-or:
-
-`tools\check.bat`
+Run `python tools/check.py` (or `tools\check.bat`).
 
 ## Repository navigation
 
