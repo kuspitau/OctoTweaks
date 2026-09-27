@@ -19,8 +19,6 @@ The checker uses only the Python standard library. On Windows, `tools\check.bat`
 
 Detailed reusable regression procedures live in the target module docs rather than being duplicated here.
 
-## Current targeted runtime regression
+## Validation ownership
 
-None. The current stable baseline has been accepted in game.
-
-Future changes should reopen validation only for behavior plausibly affected by that change; reusable procedures remain in the relevant module docs.
+Current validation debt is tracked in `docs/CURRENT_STATE.md` and, for significant unfinished work, the matching note under `docs/work/active/`. This file contains reusable validation procedure only; it should not duplicate transient module status.

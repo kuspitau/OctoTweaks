@@ -54,13 +54,9 @@ These runtime states are separate from documentation/work states such as planned
 
 ## SavedVariables
 
-`OctoTweaksDB` currently stores:
+`OctoTweaksDB` stores core state (`debug`, per-module enable overrides under `modules`) plus feature-owned persistent subtrees. Current examples are `extraActionBars`, `warriorAssist`, `marketWorkbench`, and `gearSearch`; their schemas and migrations remain owned by the corresponding modules.
 
-- `debug`;
-- per-module enable overrides under `modules`;
-- feature-owned persistent state under namespaced subtrees when a concrete module requires it. `wow.extra_action_bars` owns `extraActionBars` (schema version, slot assignments, bar settings, and launcher position).
-
-New feature namespaces should remain owned by their module rather than growing generic core configuration. No repository-wide migration framework exists yet; introduce one only when a real cross-version migration requirement appears and record the decision.
+New feature namespaces should remain module-owned rather than growing generic core configuration. No repository-wide migration framework exists yet; introduce one only when a real cross-version migration requirement appears and record the decision.
 
 Native WoW key assignments are saved through the client's binding system rather than duplicated into `OctoTweaksDB` when the client already provides the appropriate persistence semantics.
 

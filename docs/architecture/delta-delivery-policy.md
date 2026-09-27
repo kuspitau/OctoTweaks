@@ -88,6 +88,7 @@ Do not include by default:
 - Python caches
 - temporary logs
 - local test outputs
+- task-specific `MANIFEST.txt` files or other stale handoff summaries
 
 Include a package only if the user specifically requests one.
 

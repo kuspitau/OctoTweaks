@@ -10,6 +10,7 @@ OctoTweaks is a modular compatibility/fix/feature addon for WoW 1.12 on OctoWoW.
 - `aegis.integration` — capability-probed compatibility boundary around Aegis: Exchange internals.
 - `aegis.market_workbench` — Target/Reference search, pricing, and Aegis-backed posting workflow.
 - `aegis.market_workbench_ui` — externally hosted Workbench sub-tab inside exact source-audited Aegis UI versions, with standalone fallback.
+- `aegis.gear_search` — Aegis-hosted equipment search with category/slot/price filters, tooltip stat parsing, generic Show/Min/Weight configuration, scoring, sorting, and presets.
 
 Current state and known issues are authoritative in `docs/CURRENT_STATE.md`.
 
@@ -43,6 +44,7 @@ or `tools\package.bat`. Output is written under `dist/`.
 - `/otwa status` — Warrior Assist diagnostics/configuration.
 - `/otaegis probe` — Aegis capability/version diagnostics.
 - `/otmarket` — open/select Market Workbench; `/otmarket status` prints Workbench/Aegis UI state.
+- `/otgear` — open/select Gear Search; `/otgear status` prints Gear Search state.
 
 Subsystem docs contain complete command sets.
 

@@ -176,7 +176,7 @@ The backend diagnostics report the detected Aegis version/capabilities. `/otmark
 
 ## `aegis.market_workbench` workflow
 
-Phase-1 status: **IMPLEMENTED; general workflow runtime-accepted on current Aegis 1.53.29, with the targeted Similar Search empty-slot-option correction still awaiting its short cross-category regression matrix**. Historical 1.20.2 remains a fully exercised baseline.
+Status: **IMPLEMENTED; runtime-accepted on current Aegis 1.53.29**, including the Similar Search empty-slot-option correction. Historical 1.20.2 remains a fully exercised baseline.
 
 Entry point:
 
@@ -199,7 +199,7 @@ Behavior:
 
 ## `aegis.market_workbench_ui` integration
 
-Implementation status: **IMPLEMENTED; RUNTIME PASS on current Aegis 1.53.29 by user acceptance (2026-09-21)**. Historical 1.20.2 remains a runtime baseline; unknown private-UI versions still fail closed.
+Implementation status: **IMPLEMENTED; RUNTIME PASS on current Aegis 1.53.29**. The original Workbench integration was accepted on 2026-09-21 and coexistence through the shared Workbench + Gear Search extension registry was accepted with the recent feature set on 2026-09-27. Historical 1.20.2 remains a runtime baseline; unknown private-UI versions still fail closed.
 
 On exact source-audited Aegis 1.20.2 or 1.53.29:
 

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 import zipfile
 from pathlib import Path
@@ -26,6 +27,11 @@ def main() -> int:
     if not ADDON.is_dir():
         print("[FAIL] addon directory not found")
         return 1
+
+    check = subprocess.run([sys.executable, str(ROOT / "tools" / "check.py")], cwd=ROOT)
+    if check.returncode != 0:
+        print("[FAIL] package aborted because repository validation failed")
+        return check.returncode
 
     DIST.mkdir(exist_ok=True)
     out = DIST / f"OctoTweaks-v{version()}.zip"

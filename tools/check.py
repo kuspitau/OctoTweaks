@@ -117,6 +117,19 @@ def check_module_docs() -> bool:
     return result(not missing, "module ids documented in CURRENT_STATE", ", ".join(missing))
 
 
+def check_readme_modules() -> bool:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    missing: list[str] = []
+    pattern = re.compile(r'\bid\s*=\s*"([a-z0-9_]+\.[a-z0-9_]+)"')
+
+    for path in lua_files():
+        for module_id in pattern.findall(path.read_text(encoding="utf-8")):
+            if module_id not in readme:
+                missing.append(module_id)
+
+    return result(not missing, "module ids listed in README", ", ".join(missing))
+
+
 def check_no_third_party_payloads() -> bool:
     forbidden_roots = {"pfUI", "pfQuest", "Aegis_Exchange"}
     found = [p.name for p in ROOT.iterdir() if p.is_dir() and p.name in forbidden_roots]
@@ -149,6 +162,7 @@ def main() -> int:
         check_module_ids(),
         check_lua50_guardrails(),
         check_module_docs(),
+        check_readme_modules(),
         check_no_third_party_payloads(),
         check_delta_gitignore(),
         check_deployment_contract(),
